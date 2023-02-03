@@ -2,40 +2,45 @@ package service;
 
 import model.Carro;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CarroServiceImplTest {
 
+    CarroService carroService;
+    Carro celtinha;
+
+    @Before
+    public void setup(){
+        carroService = new CarroServiceImpl();
+        celtinha = new Carro("Prata", "Chevrolet", "Celta", 2001, 50);
+    }
+
     @Test
     public void deveAcelerarCorretamente() {
-        CarroService carroService = new CarroServiceImpl();
 
         // Given
-        Carro carroTeste01 = new Carro("Azul", "Fiat", "Uno", 2015, 150);
-        carroService.ligar(carroTeste01);
+        carroService.ligar(celtinha);
 
         // When
-        carroService.acelerar(carroTeste01, 10);
+        carroService.acelerar(celtinha, 10);
 
         // Then
         // Assertivas
         // O Junit busca por Asserts no método para validar que o teste passou
-        Assert.assertTrue(carroTeste01.getVelocidadeAtual() == 10);
+        Assert.assertEquals(10, celtinha.getVelocidadeAtual());
     }
 
     @Test
     public void deveLigarCorretamente() {
-        CarroService carroService = new CarroServiceImpl();
 
         // Dado
-        Carro carro =
-                new Carro("vermelho", "marca", "modelo", 1990, 100);
 
         // Quando
-        carroService.ligar(carro);
+        carroService.ligar(celtinha);
 
         // Então
-        Assert.assertTrue(carro.isLigado());
+        Assert.assertTrue(celtinha.isLigado());
     }
 
     @Test
@@ -43,8 +48,6 @@ public class CarroServiceImplTest {
         // O Junit busca por Assets no método para validar que o teste passou
 
         // Dado:
-        CarroService carroService = new CarroServiceImpl();
-        Carro celtinha = new Carro("Prata", "Chevrolet", "Celta", 2001, 50);
         carroService.ligar(celtinha); // velocidade zero
 
         // Quando:
@@ -58,8 +61,6 @@ public class CarroServiceImplTest {
     @Test
     public void deveLigarCorretamenteEAcelerarCorretamente() {
         // Dado:
-        CarroService carroService = new CarroServiceImpl();
-        Carro celtinha = new Carro("Prata", "Chevrolet", "Celta", 2001, 50);
 
         // Quando:
         carroService.ligar(celtinha);
@@ -70,4 +71,77 @@ public class CarroServiceImplTest {
         Assert.assertEquals(10, celtinha.getVelocidadeAtual());
     }
 
+    @Test
+    public void oCarroDeveIniciarDesligado() {
+        // Dado:
+
+        // Quando:
+
+        // Então:
+        Assert.assertFalse(celtinha.isLigado());
+    }
+
+    @Test
+    public void naoDeveAcelerarComCarroDesligado() {
+        // Dado:
+
+        // Quando:
+        carroService.acelerar(celtinha, 10);
+
+        // Então:
+        Assert.assertFalse(celtinha.isLigado());
+        Assert.assertFalse(celtinha.getVelocidadeAtual() != 0);
+    }
+
+    @Test
+    public void naoDevefrearComCarroDesligado() {
+        // Dado:
+
+        // Quando:
+        carroService.frear(celtinha, 10);
+
+        // Então:
+        Assert.assertFalse(celtinha.isLigado());
+        Assert.assertFalse(celtinha.getVelocidadeAtual() != 0);
+    }
+
+    @Test
+    public void naoDeveDesligarComCarroEmMovimento() {
+        // Dado:
+
+        // Quando:
+        carroService.ligar(celtinha);
+        carroService.acelerar(celtinha, 50);
+        carroService.desligar(celtinha);
+
+        // Então:
+        Assert.assertTrue(celtinha.isLigado());
+        Assert.assertTrue(celtinha.getVelocidadeAtual() != 0);
+    }
+
+    @Test
+    public void naoExisteVelocidadeNegativa() {
+        // Dado:
+
+        // Quando:
+        carroService.ligar(celtinha);
+        carroService.acelerar(celtinha, 50);
+        carroService.frear(celtinha, 70);
+
+        // Então:
+        Assert.assertEquals(0, celtinha.getVelocidadeAtual());
+    }
+
+    @Test
+    public void oCarroNaoDevePassarDeSuaVelocidadeMaxima() {
+        // Dado:
+
+        // Quando:
+        carroService.ligar(celtinha);
+        carroService.acelerar(celtinha, 40);
+        carroService.acelerar(celtinha, 20);
+
+        // Então:
+        Assert.assertEquals(celtinha.getVelocidadeAtual(), celtinha.getVelocidadeMaxima());
+    }
 }
